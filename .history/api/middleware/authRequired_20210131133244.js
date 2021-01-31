@@ -1,6 +1,13 @@
 const createError = require('http-errors');
-//const Profiles = require('../profile/profileModel');
+const Profiles = require('../profile/profileModel');
 
+const makeProfileObj = (claims) => {
+  return {
+    id: claims.sub,
+    email: claims.email,
+    name: claims.name,
+  };
+};
 /**
  * A simple middleware that asserts valid Okta idToken and sends 401 responses
  * if the token is not present or fails validation. If the token is valid its

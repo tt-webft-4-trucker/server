@@ -22,6 +22,7 @@ const swaggerUIOptions = {
 const indexRouter = require('./index/indexRouter');
 const profileRouter = require('./profile/profileRouter');
 
+
 const app = express();
 
 process.on('unhandledRejection', (reason, p) => {
@@ -49,6 +50,7 @@ app.use(cookieParser());
 // application routes
 app.use('/', indexRouter);
 app.use(['/profile', '/profiles'], profileRouter);
+app.use('/data', dsRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
