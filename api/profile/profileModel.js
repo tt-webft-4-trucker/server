@@ -13,14 +13,19 @@ const findById = async (profile_id) => {
 };
 
 const create = async (profile) => {
-  await db('profiles')
+  return await db('profiles')
     .insert(profile)
     .returning('*')
-    .then((profile) => {
-      createDiner(profile);
+    .then(async (profile) => {
+      //console.log(profile);
+      return await db('diners')
+        .insert({ profile_id: profile[0].profile_id })
+        .returning('*');
     })
-    .then((diner) => {
-      return findById(diner.profile_id);
+    .then(async (diner) => {
+      return await db('profiles')
+        .where({ profile_id: diner[0].profile_id })
+        .returning('*');
     });
 };
 
@@ -54,7 +59,9 @@ const getOperatorInfo = async (profile_id) => {
 
 // Diner methods
 const createDiner = async (profile) => {
-  return db('diners').insert({ profile_id: profile.profile_id }).returning('*');
+  return db('diners')
+    .insert([{ profile_id: profile.profile_id }])
+    .returning('*');
 };
 
 const getDinerInfo = async (profile_id) => {

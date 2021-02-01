@@ -92,9 +92,10 @@ router.post('/', async (req, res) => {
         if (pf == undefined) {
           //profile not found so lets insert it
           await Profiles.create(profile).then((profile) => {
+            console.log(profile);
             res
               .status(200)
-              .json({ message: 'profile created', profile: profile[0] });
+              .json({ message: 'profile created', profile: profile });
           });
         } else {
           res.status(400).json({ message: 'profile already exists' });
@@ -112,7 +113,7 @@ router.post('/', async (req, res) => {
 router.put('/', (req, res) => {
   const profile = req.body;
   if (profile) {
-    const id = profile.id || 0;
+    const id = profile.profile_id || 0;
     Profiles.findById(id)
       .then(
         Profiles.update(id, profile)
