@@ -12,19 +12,16 @@ const findById = async (profile_id) => {
   return db('profiles').where({ profile_id }).first().select('*');
 };
 
-const getOperatorInfo = async (profile_id) => {
-  return db('operators').where({ profile_id }).first().select('trucks');
-};
-
-const getDinerInfo = async (profile_id) => {
-  return db('diners')
-    .where({ profile_id })
-    .first()
-    .select('current_location', 'favorite_trucks');
-};
-
 const create = async (profile) => {
-  return db('profiles').insert(profile).returning('*');
+  await db('profiles')
+    .insert(profile)
+    .returning('*')
+    .then((profile) => {
+      createDiner(profile);
+    })
+    .then((diner) => {
+      return findById(diner.profile_id);
+    });
 };
 
 const update = (profile_id, profile) => {
@@ -34,7 +31,6 @@ const update = (profile_id, profile) => {
     .update(profile)
     .returning('*');
 };
-
 const remove = async (profile_id) => {
   return await db('profiles').where({ profile_id }).del();
 };
@@ -51,15 +47,32 @@ const findOrCreateProfile = async (profileObj) => {
     });
   }
 };
+// Operator methods
+const getOperatorInfo = async (profile_id) => {
+  return db('operators').where({ profile_id }).first().select('trucks');
+};
+
+// Diner methods
+const createDiner = async (profile) => {
+  return db('diners').insert({ profile_id: profile.profile_id }).returning('*');
+};
+
+const getDinerInfo = async (profile_id) => {
+  return db('diners')
+    .where({ profile_id })
+    .first()
+    .select('current_location', 'favorite_trucks');
+};
 
 module.exports = {
   findAll,
   findBy,
   findById,
-  getOperatorInfo,
-  getDinerInfo,
   create,
   update,
   remove,
   findOrCreateProfile,
+  getOperatorInfo,
+  createDiner,
+  getDinerInfo,
 };
