@@ -215,7 +215,7 @@ router.get('/:id/diner', function (req, res) {
 router.post('/', async (req, res) => {
   const profile = req.body;
   if (profile) {
-    const id = profile.id || 0;
+    const id = profile.profile_id || 0;
     try {
       await Profiles.findById(id).then(async (pf) => {
         if (pf == undefined) {
