@@ -1,7 +1,7 @@
 exports.up = function (knex) {
   return knex.schema.table('profiles', function (table) {
-    table.string('diner_id').references('diner_id').inTable('diners');
-    table.string('operator_id').references('operator_id').inTable('operators');
+    table.integer('diner_id').references('diner_id').inTable('diners');
+    table.integer('operator_id').references('operator_id').inTable('operators');
   });
 };
 

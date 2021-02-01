@@ -37,7 +37,7 @@ exports.up = (knex) => {
       table.increments('id').primary();
       table.integer('truck_id').references('truck_id').inTable('trucks');
       table.string('item_name');
-      table.string('itemm_description');
+      table.string('item_description');
       table.decimal('item_price');
       table.string('item_photos');
       table.timestamps(true, true);
@@ -46,9 +46,9 @@ exports.up = (knex) => {
 
 exports.down = (knex) => {
   return knex.schema
-    .dropTableIfExists('profiles')
-    .dropTableIfExists('operators')
+    .dropTableIfExists('menu_items')
     .dropTableIfExists('trucks')
     .dropTableIfExists('diners')
-    .dropTableIfExists('menu_items');
+    .dropTableIfExists('operators')
+    .dropTableIfExists('profiles');
 };

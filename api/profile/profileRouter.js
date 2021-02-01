@@ -36,7 +36,6 @@ const router = express.Router();
  *    description: Returns a list of profiles
  *    summary: Get a list of all profiles
  *    security:
- *      - okta: []
  *    tags:
  *      - profile
  *    responses:
