@@ -13,11 +13,14 @@ const findById = async (profile_id) => {
 };
 
 const getOperatorInfo = async (profile_id) => {
-  return db('operators').where({ profile_id }).first().select('*');
+  return db('operators').where({ profile_id }).first().select('trucks');
 };
 
 const getDinerInfo = async (profile_id) => {
-  return db('diners').where({ profile_id }).first().select('*');
+  return db('diners')
+    .where({ profile_id })
+    .first()
+    .select('current_location', 'favorite_trucks');
 };
 
 const create = async (profile) => {

@@ -129,14 +129,46 @@ router.get('/:id/operator', function (req, res) {
       if (profile) {
         Profiles.getOperatorInfo(id)
           .then((operator) => {
-            res.status(200).json({ ...profile, operator: operator });
+            console.log(operator);
+            if (operator) {
+              res.status(200).json({ ...profile, operator });
+            } else {
+              res.status(404).json({ error: 'Operator Not Found' });
+            }
           })
           .catch((err) => {
-            res.status(404).json({ error: `Operator Not Found: ${err}` });
+            res.status(500).json({ error: err.message });
           });
-        res.status(200).json(profile);
       } else {
-        res.status(404).json({ error: 'ProfileNotFound' });
+        res.status(404).json({ error: 'Profile Not Found' });
+      }
+    })
+    .catch((err) => {
+      res.status(500).json({ error: err.message });
+    });
+});
+
+router.get('/:id/diner', function (req, res) {
+  const id = String(req.params.id);
+  Profiles.findById(id)
+    .then((profile) => {
+      if (profile) {
+        Profiles.getDinerInfo(id)
+          .then((diner) => {
+            if (diner) {
+              res.status(200).json({
+                ...profile,
+                diner,
+              });
+            } else {
+              res.status(404).json({ error: 'Diner Not Found' });
+            }
+          })
+          .catch((err) => {
+            res.status(500).json({ error: err.message });
+          });
+      } else {
+        res.status(404).json({ error: 'Profile Not Found' });
       }
     })
     .catch((err) => {
