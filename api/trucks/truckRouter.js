@@ -112,7 +112,18 @@ router.get('/:id', function (req, res) {
   Trucks.findById(id)
     .then((truck) => {
       if (truck) {
-        res.status(200).json(truck);
+        Trucks.getMenu(id)
+          .then((menu) => {
+            if (menu) {
+              console.log('menu is there');
+              res.status(200).json({ ...truck, menu: menu });
+            } else {
+              res.status(404).json({ error: 'Menu Not Found' });
+            }
+          })
+          .catch((err) => {
+            res.status(500).json({ error: err.message });
+          });
       } else {
         res.status(404).json({ error: 'Truck Not Found' });
       }
