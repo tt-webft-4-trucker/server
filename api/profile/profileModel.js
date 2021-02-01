@@ -8,29 +8,38 @@ const findBy = (filter) => {
   return db('profiles').where(filter);
 };
 
-const findById = async (id) => {
-  return db('profiles').where({ id }).first().select('*');
+const findById = async (profile_id) => {
+  return db('profiles').where({ profile_id }).first().select('*');
+};
+
+const getOperatorInfo = async (profile_id) => {
+  return db('operators').where({ profile_id }).first().select('*');
+};
+
+const getDinerInfo = async (profile_id) => {
+  return db('diners').where({ profile_id }).first().select('*');
 };
 
 const create = async (profile) => {
   return db('profiles').insert(profile).returning('*');
 };
 
-const update = (id, profile) => {
-  console.log(profile);
+const update = (profile_id, profile) => {
   return db('profiles')
-    .where({ id: id })
+    .where({ profile_id: profile_id })
     .first()
     .update(profile)
     .returning('*');
 };
 
-const remove = async (id) => {
-  return await db('profiles').where({ id }).del();
+const remove = async (profile_id) => {
+  return await db('profiles').where({ profile_id }).del();
 };
 
 const findOrCreateProfile = async (profileObj) => {
-  const foundProfile = await findById(profileObj.id).then((profile) => profile);
+  const foundProfile = await findById(profileObj.profile_id).then(
+    (profile) => profile
+  );
   if (foundProfile) {
     return foundProfile;
   } else {
@@ -44,6 +53,8 @@ module.exports = {
   findAll,
   findBy,
   findById,
+  getOperatorInfo,
+  getDinerInfo,
   create,
   update,
   remove,

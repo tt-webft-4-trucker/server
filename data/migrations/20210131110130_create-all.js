@@ -32,6 +32,7 @@ exports.up = (knex) => {
       table.string('profile_id').references('profile_id').inTable('profiles');
       table.string('favorite_trucks');
       table.string('current_location');
+      table.timestamps(true, true);
     })
     .createTable('menu_items', function (table) {
       table.increments('id').primary();

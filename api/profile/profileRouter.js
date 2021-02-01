@@ -122,6 +122,28 @@ router.get('/:id', function (req, res) {
     });
 });
 
+router.get('/:id/operator', function (req, res) {
+  const id = String(req.params.id);
+  Profiles.findById(id)
+    .then((profile) => {
+      if (profile) {
+        Profiles.getOperatorInfo(id)
+          .then((operator) => {
+            res.status(200).json({ ...profile, operator: operator });
+          })
+          .catch((err) => {
+            res.status(404).json({ error: `Operator Not Found: ${err}` });
+          });
+        res.status(200).json(profile);
+      } else {
+        res.status(404).json({ error: 'ProfileNotFound' });
+      }
+    })
+    .catch((err) => {
+      res.status(500).json({ error: err.message });
+    });
+});
+
 /**
  * @swagger
  * /profile:
