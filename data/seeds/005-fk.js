@@ -16,27 +16,27 @@ exports.seed = async function (knex) {
       console.log(profile_ids);
       return knex('profiles')
         .where('profile_id', profile_ids[0])
-        .update(fks(0, null));
+        .update(fks(1, null));
     })
     .then(function () {
       return knex('profiles')
         .where('profile_id', profile_ids[1])
-        .update(fks(1, 0));
-    })
-    .then(function () {
-      return knex('profiles')
-        .where('profile_id', profile_ids[2])
         .update(fks(2, 1));
     })
     .then(function () {
       return knex('profiles')
+        .where('profile_id', profile_ids[2])
+        .update(fks(3, 1));
+    })
+    .then(function () {
+      return knex('profiles')
         .where('profile_id', profile_ids[3])
-        .update(fks(3, null));
+        .update(fks(4, null));
     })
     .then(function () {
       return knex('profiles')
         .where('profile_id', profile_ids[4])
-        .update(fks(4, 2));
+        .update(fks(5, 2));
     });
 };
 

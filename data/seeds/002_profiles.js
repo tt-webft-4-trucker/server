@@ -11,15 +11,13 @@ const profiles = [...new Array(5)].map((i, idx) => ({
       : `${faker.name.firstName()} ${faker.name.lastName()}`,
 }));
 
-const diners = profiles.map((profile, i) => ({
-  diner_id: i,
+const diners = profiles.map((profile) => ({
   profile_id: profile.profile_id,
   favorite_trucks: [],
   current_location: '',
 }));
 
-const operators = profiles.map((profile, i) => ({
-  operator_id: i,
+const operators = profiles.map((profile) => ({
   profile_id: profile.profile_id,
   trucks: [],
 }));

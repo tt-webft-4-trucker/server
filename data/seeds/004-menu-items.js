@@ -29,11 +29,9 @@ const menu3 = [...new Array(9)].map((i) => ({
 
 exports.seed = function (knex) {
   // Deletes ALL existing entries
+
   return knex('menu_items')
-    .del()
-    .then(function () {
-      return knex('menu_items').insert(menu1);
-    })
+    .insert(menu1)
     .then(function () {
       return knex('menu_items').insert(menu2);
     })
