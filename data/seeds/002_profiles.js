@@ -5,6 +5,7 @@ const profiles = [...new Array(5)].map((i, idx) => ({
     idx === 0 ? '00ulthapbErVUwVJy4x6' : faker.random.alphaNumeric(20),
   avatarUrl: faker.image.avatar(),
   email: idx === 0 ? 'llama001@maildrop.cc"' : faker.internet.email(),
+  password: faker.internet.password(),
   name:
     idx === 0
       ? 'Test001 User'
