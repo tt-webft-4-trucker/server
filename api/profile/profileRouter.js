@@ -1,7 +1,20 @@
+const { v4: uuidv4 } = require('uuid');
 const express = require('express');
+const jwt = require('jsonwebtoken');
 //const authRequired = require('../middleware/authRequired');
 const Profiles = require('./profileModel');
 const router = express.Router();
+
+const makeJwt = (profile) => {
+  const payload = {
+    email: profile.email,
+    id: profile.profile_id,
+  };
+  const config = {
+    jwtSecret: process.env.JWT_SECRET || 'foo',
+  };
+  return jwt.sign(payload, config.jwtSecret);
+};
 
 router.get('/', function (req, res) {
   Profiles.findAll()
@@ -86,19 +99,28 @@ router.get('/:id/diner', function (req, res) {
 router.post('/', async (req, res) => {
   const profile = req.body;
   if (profile) {
-    const id = profile.profile_id || 0;
     try {
-      await Profiles.findById(id).then(async (pf) => {
-        if (pf == undefined) {
+      await Profiles.findBy({ email: profile.email }).then(async (pf) => {
+        if (pf.length < 1) {
           //profile not found so lets insert it
-          await Profiles.create(profile).then((profile) => {
-            console.log(profile);
-            res
-              .status(200)
-              .json({ message: 'profile created', profile: profile });
-          });
+          const uuid = uuidv4();
+          await Profiles.create({ ...profile, profile_id: uuid }).then(
+            (profile) => {
+              console.log(profile);
+              const token = makeJwt(profile[0]);
+              //eslint-disable-next-line
+              const { password, avatarUrl, ...profResponse } = profile[0];
+              res.status(200).json({
+                message: 'profile created',
+                profile: profResponse,
+                token: token,
+              });
+            }
+          );
         } else {
-          res.status(400).json({ message: 'profile already exists' });
+          res
+            .status(400)
+            .json({ message: 'Profile already exists with this email' });
         }
       });
     } catch (e) {
