@@ -17,7 +17,6 @@ const create = async (profile) => {
     .insert(profile)
     .returning('*')
     .then(async (profile) => {
-      //console.log(profile);
       return await db('diners')
         .insert({ profile_id: profile[0].profile_id })
         .returning('*');
@@ -25,6 +24,7 @@ const create = async (profile) => {
     .then(async (diner) => {
       return await db('profiles')
         .where({ profile_id: diner[0].profile_id })
+        .update({ diner_id: diner[0].diner_id })
         .returning('*');
     });
 };

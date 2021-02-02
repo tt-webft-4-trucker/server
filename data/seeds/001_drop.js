@@ -13,8 +13,5 @@ exports.seed = function (knex) {
     })
     .then(function () {
       return knex('profiles').del();
-    })
-    .then(function () {
-      return knex('menu_items').del();
     });
 };

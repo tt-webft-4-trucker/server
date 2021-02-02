@@ -25,8 +25,6 @@ const menu3 = [...new Array(9)].map(() => ({
 }));
 
 exports.seed = function (knex) {
-  // Deletes ALL existing entries
-
   return knex('menu_items')
     .insert(menu1)
     .then(function () {
