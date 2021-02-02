@@ -97,16 +97,19 @@ router.get('/:id/diner', function (req, res) {
 });
 
 router.post('/', async (req, res) => {
-  const profile = req.body;
+  const profileReq = req.body;
+  const { role, ...profile } = profileReq;
   if (profile) {
     try {
       await Profiles.findBy({ email: profile.email }).then(async (pf) => {
         if (pf.length < 1) {
           //profile not found so lets insert it
           const uuid = uuidv4();
-          await Profiles.create({ ...profile, profile_id: uuid }).then(
-            (profile) => {
-              console.log(profile);
+          if (role === 'operator') {
+            await Profiles.createWithOperator({
+              ...profile,
+              profile_id: uuid,
+            }).then((profile) => {
               const token = makeJwt(profile[0]);
               //eslint-disable-next-line
               const { password, avatarUrl, ...profResponse } = profile[0];
@@ -115,8 +118,21 @@ router.post('/', async (req, res) => {
                 profile: profResponse,
                 token: token,
               });
-            }
-          );
+            });
+          } else {
+            await Profiles.create({ ...profile, profile_id: uuid }).then(
+              (profile) => {
+                const token = makeJwt(profile[0]);
+                //eslint-disable-next-line
+                const { password, avatarUrl, ...profResponse } = profile[0];
+                res.status(200).json({
+                  message: 'profile created',
+                  profile: profResponse,
+                  token: token,
+                });
+              }
+            );
+          }
         } else {
           res
             .status(400)

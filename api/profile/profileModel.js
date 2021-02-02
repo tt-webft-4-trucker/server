@@ -31,6 +31,35 @@ const create = async (profile) => {
     });
 };
 
+const createWithOperator = async (profile) => {
+  const hash = bcrypt.hashSync(profile.password);
+  return await db('profiles')
+    .insert({ ...profile, password: hash })
+    .returning('*')
+    .then(async (profile) => {
+      return await db('diners')
+        .insert({ profile_id: profile[0].profile_id })
+        .returning('*');
+    })
+    .then(async (diner) => {
+      return await db('profiles')
+        .where({ profile_id: diner[0].profile_id })
+        .update({ diner_id: diner[0].diner_id })
+        .returning('*');
+    })
+    .then(async (profile) => {
+      return await db('operators')
+        .insert({ profile_id: profile[0].profile_id })
+        .returning('*');
+    })
+    .then(async (operator) => {
+      return await db('profiles')
+        .where({ profile_id: operator[0].profile_id })
+        .update({ operator_id: operator[0].operator_id })
+        .returning('*');
+    });
+};
+
 const update = (profile_id, profile) => {
   return db('profiles')
     .where({ profile_id: profile_id })
@@ -81,6 +110,7 @@ module.exports = {
   update,
   remove,
   findOrCreateProfile,
+  createWithOperator,
   getOperatorInfo,
   createDiner,
   getDinerInfo,
