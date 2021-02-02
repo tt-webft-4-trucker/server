@@ -21,9 +21,9 @@ exports.up = (knex) => {
         .integer('operator_id')
         .references('operator_id')
         .inTable('operators');
-      table.string('name');
+      table.string('name').notNullable();
       table.string('img_url');
-      table.string('cuisine_type');
+      table.string('cuisine_type').notNullable();
       table.decimal('customer_rating_avg');
       table.string('current_location');
       table.timestamps(true, true);
@@ -38,9 +38,9 @@ exports.up = (knex) => {
     .createTable('menu_items', function (table) {
       table.increments('id').primary();
       table.integer('truck_id').references('truck_id').inTable('trucks');
-      table.string('item_name');
-      table.string('item_description');
-      table.decimal('item_price');
+      table.string('item_name').notNullable();
+      table.string('item_description').notNullable();
+      table.decimal('item_price').notNullable();
       table.string('item_photos');
       table.timestamps(true, true);
     });
