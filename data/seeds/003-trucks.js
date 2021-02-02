@@ -8,7 +8,6 @@ exports.seed = function (knex) {
       // Inserts seed entries
       return knex('trucks').insert([
         {
-          truck_id: 1,
           operator_id: 1,
           name: 'Franks Dogs',
           img_url: faker.image.avatar(),
@@ -17,7 +16,6 @@ exports.seed = function (knex) {
           current_location: 'Somewhere',
         },
         {
-          truck_id: 2,
           operator_id: 1,
           name: 'Frans French Fries',
           img_url: faker.image.avatar(),
@@ -26,7 +24,6 @@ exports.seed = function (knex) {
           current_location: 'Somewhere',
         },
         {
-          truck_id: 3,
           operator_id: 2,
           name: 'Little Thai',
           img_url: faker.image.avatar(),
