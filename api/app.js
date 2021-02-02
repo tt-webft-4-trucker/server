@@ -23,6 +23,7 @@ const indexRouter = require('./index/indexRouter');
 const profileRouter = require('./profile/profileRouter');
 const truckRouter = require('./trucks/truckRouter');
 const authRouter = require('./auth/authRouter');
+const operatorRouter = require('./operator/operatorRouter');
 
 const app = express();
 
@@ -53,6 +54,7 @@ app.use('/', indexRouter);
 app.use(['/profile', '/profiles'], profileRouter);
 app.use(['/truck', '/trucks'], truckRouter);
 app.use('/login', authRouter);
+app.use('/operator', operatorRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
