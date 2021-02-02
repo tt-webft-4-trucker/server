@@ -1,4 +1,5 @@
 const db = require('../../data/db-config');
+const bcrypt = require('bcryptjs');
 
 const findAll = async () => {
   return await db('profiles');
@@ -13,8 +14,9 @@ const findById = async (profile_id) => {
 };
 
 const create = async (profile) => {
+  const hash = bcrypt.hashSync(profile.password);
   return await db('profiles')
-    .insert(profile)
+    .insert({ ...profile, password: hash })
     .returning('*')
     .then(async (profile) => {
       return await db('diners')
