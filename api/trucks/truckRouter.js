@@ -67,14 +67,14 @@ router.post('/', async (req, res) => {
 router.put('/', (req, res) => {
   const truck = req.body;
   if (truck) {
-    const id = truck.id || 0;
+    const id = truck.truck_id || 0;
     Trucks.findById(id)
       .then(
         Trucks.update(id, truck)
           .then((updated) => {
             res
               .status(200)
-              .json({ message: 'profile created', truck: updated[0] });
+              .json({ message: 'Truck updated', truck: updated[0] });
           })
           .catch((err) => {
             res.status(500).json({
