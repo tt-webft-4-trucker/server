@@ -22,7 +22,6 @@ router.get('/:id', function (req, res) {
         Trucks.getMenu(id)
           .then((menu) => {
             if (menu) {
-              console.log('menu is there');
               res.status(200).json({ ...truck, menu: menu });
             } else {
               res.status(404).json({ error: 'Menu Not Found' });
