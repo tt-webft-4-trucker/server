@@ -49,7 +49,6 @@ router.get('/:id/operator', function (req, res) {
       if (profile) {
         Profiles.getOperatorInfo(id)
           .then((operator) => {
-            console.log(operator);
             if (operator) {
               res.status(200).json({ ...profile, operator });
             } else {

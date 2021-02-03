@@ -11,7 +11,11 @@ exports.up = (knex) => {
     })
     .createTable('operators', function (table) {
       table.increments('operator_id').primary();
-      table.string('profile_id').references('profile_id').inTable('profiles');
+      table
+        .string('profile_id')
+        .references('profile_id')
+        .inTable('profiles')
+        .notNullable();
       table.string('trucks');
       table.timestamps(true, true);
     })
@@ -20,7 +24,8 @@ exports.up = (knex) => {
       table
         .integer('operator_id')
         .references('operator_id')
-        .inTable('operators');
+        .inTable('operators')
+        .notNullable();
       table.string('name').notNullable();
       table.string('img_url');
       table.string('cuisine_type').notNullable();
@@ -37,7 +42,11 @@ exports.up = (knex) => {
     })
     .createTable('menu_items', function (table) {
       table.increments('id').primary();
-      table.integer('truck_id').references('truck_id').inTable('trucks');
+      table
+        .integer('truck_id')
+        .references('truck_id')
+        .inTable('trucks')
+        .notNullable();
       table.string('item_name').notNullable();
       table.string('item_description').notNullable();
       table.decimal('item_price').notNullable();
