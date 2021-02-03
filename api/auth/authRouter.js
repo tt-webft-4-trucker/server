@@ -1,19 +1,8 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const Profiles = require('../profile/profileModel');
-const jwt = require('jsonwebtoken');
+const Auth = require('./authModel');
 const router = express.Router();
-
-const makeJwt = (profile) => {
-  const payload = {
-    email: profile.email,
-    id: profile.profile_id,
-  };
-  const config = {
-    jwtSecret: process.env.JWT_SECRET || 'foo',
-  };
-  return jwt.sign(payload, config.jwtSecret);
-};
 
 router.post('/', async (req, res) => {
   Profiles.findBy({ email: req.body.email })
@@ -25,7 +14,7 @@ router.post('/', async (req, res) => {
       if (verifies) {
         //eslint-disable-next-line
         const { password, ...profResp } = profiles[0];
-        const token = makeJwt(profiles[0]);
+        const token = Auth.makeToken(profiles[0]);
         res.status(200).json({ profile: profResp, token: token });
       } else
         res.status(401).json({ message: 'Incorrect username or password' });

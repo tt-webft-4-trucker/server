@@ -56,7 +56,7 @@ app.use(['/profile', '/profiles'], profileRouter);
 app.use(['/truck', '/trucks'], truckRouter);
 app.use('/login', authRouter);
 app.use('/operator', operatorRouter);
-app.use('/menus', menuRouter);
+app.use('/menu', menuRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

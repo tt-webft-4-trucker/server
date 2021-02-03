@@ -1,98 +1,66 @@
 const { v4: uuidv4 } = require('uuid');
 const express = require('express');
-const jwt = require('jsonwebtoken');
-//const authRequired = require('../middleware/authRequired');
+const Auth = require('../auth/authModel');
 const Profiles = require('./profileModel');
 const router = express.Router();
 
-const makeJwt = (profile) => {
-  const payload = {
-    email: profile.email,
-    id: profile.profile_id,
-  };
-  const config = {
-    jwtSecret: process.env.JWT_SECRET || 'foo',
-  };
-  return jwt.sign(payload, config.jwtSecret);
-};
-
-router.get('/', function (req, res) {
-  Profiles.findAll()
-    .then((profiles) => {
-      res.status(200).json(profiles);
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).json({ message: err.message });
-    });
+router.get('/:id', Auth.requireToken, function (req, res) {
+  const user = res.locals.user;
+  const validate = user.profile_id === req.params.id;
+  if (validate) {
+    Profiles.findById(req.params.id)
+      .then((profile) => {
+        if (profile) {
+          res.status(200).json(profile);
+        } else {
+          res.status(404).json({ error: 'ProfileNotFound' });
+        }
+      })
+      .catch((err) => {
+        res.status(500).json({ error: err.message });
+      });
+  } else {
+    res
+      .status(401)
+      .json({ message: 'Unable to authorize you for this request' });
+  }
 });
 
-router.get('/:id', function (req, res) {
+router.get('/:id/diner', Auth.requireToken, function (req, res) {
   const id = String(req.params.id);
-  Profiles.findById(id)
-    .then((profile) => {
-      if (profile) {
-        res.status(200).json(profile);
-      } else {
-        res.status(404).json({ error: 'ProfileNotFound' });
-      }
-    })
-    .catch((err) => {
-      res.status(500).json({ error: err.message });
-    });
-});
+  const user = res.locals.user;
+  const validate = user.profile_id === id;
 
-router.get('/:id/operator', function (req, res) {
-  const id = String(req.params.id);
-  Profiles.findById(id)
-    .then((profile) => {
-      if (profile) {
-        Profiles.getOperatorInfo(id)
-          .then((operator) => {
-            if (operator) {
-              res.status(200).json({ ...profile, operator });
-            } else {
-              res.status(404).json({ error: 'Operator Not Found' });
-            }
-          })
-          .catch((err) => {
-            res.status(500).json({ error: err.message });
-          });
-      } else {
-        res.status(404).json({ error: 'Profile Not Found' });
-      }
-    })
-    .catch((err) => {
-      res.status(500).json({ error: err.message });
-    });
-});
-
-router.get('/:id/diner', function (req, res) {
-  const id = String(req.params.id);
-  Profiles.findById(id)
-    .then((profile) => {
-      if (profile) {
-        Profiles.getDinerInfo(id)
-          .then((diner) => {
-            if (diner) {
-              res.status(200).json({
-                ...profile,
-                diner,
-              });
-            } else {
-              res.status(404).json({ error: 'Diner Not Found' });
-            }
-          })
-          .catch((err) => {
-            res.status(500).json({ error: err.message });
-          });
-      } else {
-        res.status(404).json({ error: 'Profile Not Found' });
-      }
-    })
-    .catch((err) => {
-      res.status(500).json({ error: err.message });
-    });
+  if (validate) {
+    Profiles.findById(id)
+      .then((profile) => {
+        if (profile) {
+          Profiles.getDinerInfo(id)
+            .then((diner) => {
+              if (diner) {
+                res.status(200).json({
+                  ...profile,
+                  diner,
+                });
+              } else {
+                res.status(404).json({ error: 'Diner Not Found' });
+              }
+            })
+            .catch((err) => {
+              res.status(500).json({ error: err.message });
+            });
+        } else {
+          res.status(404).json({ error: 'Profile Not Found' });
+        }
+      })
+      .catch((err) => {
+        res.status(500).json({ error: err.message });
+      });
+  } else {
+    res
+      .status(401)
+      .json({ message: 'Unable to authorize you for this request' });
+  }
 });
 
 router.post('/', async (req, res) => {
@@ -109,7 +77,7 @@ router.post('/', async (req, res) => {
               ...profile,
               profile_id: uuid,
             }).then((profile) => {
-              const token = makeJwt(profile[0]);
+              const token = Auth.makeToken(profile[0]);
               //eslint-disable-next-line
               const { password, avatarUrl, ...profResponse } = profile[0];
               res.status(200).json({
@@ -121,7 +89,7 @@ router.post('/', async (req, res) => {
           } else {
             await Profiles.create({ ...profile, profile_id: uuid }).then(
               (profile) => {
-                const token = makeJwt(profile[0]);
+                const token = Auth.makeToken(profile[0]);
                 //eslint-disable-next-line
                 const { password, avatarUrl, ...profResponse } = profile[0];
                 res.status(200).json({
@@ -175,21 +143,34 @@ router.put('/', (req, res) => {
   }
 });
 
-router.delete('/:id', (req, res) => {
-  const id = req.params.id;
-  try {
+router.delete('/:id', Auth.requireToken, (req, res) => {
+  const id = String(req.params.id);
+  const user = res.locals.user;
+  const validate = user.profile_id === id;
+
+  if (validate) {
     Profiles.findById(id).then((profile) => {
-      Profiles.remove(profile.id).then(() => {
-        res
-          .status(200)
-          .json({ message: `Profile '${id}' was deleted.`, profile: profile });
-      });
+      Profiles.remove(profile.profile_id)
+        .then(() => {
+          res.status(200).json({
+            message: `Profile '${id}' was deleted.`,
+            profile: profile,
+          });
+        })
+        .catch(() => {
+          res.status(500).json({ message: `Unable to delete profile ${id}` });
+        })
+        .catch((err) => {
+          res.status(500).json({
+            message: `Could not delete profile with ID: ${id}`,
+            error: err.message,
+          });
+        });
     });
-  } catch (err) {
-    res.status(500).json({
-      message: `Could not delete profile with ID: ${id}`,
-      error: err.message,
-    });
+  } else {
+    res
+      .status(401)
+      .json({ message: 'Unable to authorize you for this request' });
   }
 });
 
