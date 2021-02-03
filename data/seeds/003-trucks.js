@@ -1,3 +1,5 @@
+const faker = require('faker');
+
 exports.seed = function (knex) {
   // Deletes ALL existing entries
   return knex('trucks')
@@ -12,7 +14,10 @@ exports.seed = function (knex) {
             'https://elceo.com/wp-content/uploads/2019/10/food_trucks_getty.jpg',
           cuisine_type: 'Burritos',
           customer_rating_avg: 4.2,
-          current_location: 'Somewhere',
+          current_location: JSON.stringify({
+            lat: faker.address.latitude(),
+            long: faker.address.latitude(),
+          }),
         },
         {
           operator_id: 1,
@@ -21,7 +26,10 @@ exports.seed = function (knex) {
             'https://restauracionnews.com/wp-content/uploads/2020/09/Food-Truck-IceCoBar-en-Jerez-de-la-Frontera-696x522.jpg',
           cuisine_type: 'Ice Cream',
           customer_rating_avg: 4.5,
-          current_location: 'Somewhere',
+          current_location: JSON.stringify({
+            lat: faker.address.latitude(),
+            long: faker.address.latitude(),
+          }),
         },
         {
           operator_id: 2,
@@ -30,7 +38,10 @@ exports.seed = function (knex) {
             'https://www.queremoscomer.rest/img/editorial/agosto-2016/PORTADA-FOOD-TRUCKS.jpg',
           cuisine_type: 'Pizza',
           customer_rating_avg: 4.8,
-          current_location: 'Somewhere else',
+          current_location: JSON.stringify({
+            lat: faker.address.latitude(),
+            long: faker.address.latitude(),
+          }),
         },
       ]);
     });
