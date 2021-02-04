@@ -40,7 +40,9 @@ router.post('/item', Auth.requireToken, async (req, res) => {
   }
   if (validate) {
     try {
-      await Menu.create(menu_item).then((menu) => res.status(200).json(menu));
+      await Menu.create(menu_item).then((menu) =>
+        res.status(200).json(menu[0])
+      );
     } catch (e) {
       console.error(e);
       res.status(500).json({ message: e.detail });
