@@ -76,25 +76,37 @@ router.post('/', async (req, res) => {
             await Profiles.createWithOperator({
               ...profile,
               profile_id: uuid,
-            }).then((profile) => {
+            }).then(async (profile) => {
               const token = Auth.makeToken(profile[0]);
               //eslint-disable-next-line
               const { password, avatarUrl, ...profResponse } = profile[0];
+              const diner = await Profiles.getDinerInfo(profile[0].profile_id);
+
               res.status(200).json({
                 message: 'profile created',
-                profile: profResponse,
+                profile: {
+                  ...profResponse,
+                  current_location: diner.current_location,
+                },
                 token: token,
               });
             });
           } else {
             await Profiles.create({ ...profile, profile_id: uuid }).then(
-              (profile) => {
+              async (profile) => {
                 const token = Auth.makeToken(profile[0]);
                 //eslint-disable-next-line
                 const { password, avatarUrl, ...profResponse } = profile[0];
+                const diner = await Profiles.getDinerInfo(
+                  profile[0].profile_id
+                );
+
                 res.status(200).json({
                   message: 'profile created',
-                  profile: profResponse,
+                  profile: {
+                    ...profResponse,
+                    current_location: diner.current_location,
+                  },
                   token: token,
                 });
               }

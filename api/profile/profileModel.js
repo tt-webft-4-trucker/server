@@ -15,12 +15,17 @@ const findById = async (profile_id) => {
 
 const create = async (profile) => {
   const hash = bcrypt.hashSync(profile.password);
+  const { current_location, ...prof } = profile;
+
   return await db('profiles')
-    .insert({ ...profile, password: hash })
+    .insert({ ...prof, password: hash })
     .returning('*')
     .then(async (profile) => {
       return await db('diners')
-        .insert({ profile_id: profile[0].profile_id })
+        .insert({
+          profile_id: profile[0].profile_id,
+          current_location: current_location,
+        })
         .returning('*');
     })
     .then(async (diner) => {
@@ -33,12 +38,17 @@ const create = async (profile) => {
 
 const createWithOperator = async (profile) => {
   const hash = bcrypt.hashSync(profile.password);
+  const { current_location, ...prof } = profile;
+
   return await db('profiles')
-    .insert({ ...profile, password: hash })
+    .insert({ ...prof, password: hash })
     .returning('*')
     .then(async (profile) => {
       return await db('diners')
-        .insert({ profile_id: profile[0].profile_id })
+        .insert({
+          profile_id: profile[0].profile_id,
+          current_location: current_location,
+        })
         .returning('*');
     })
     .then(async (diner) => {
