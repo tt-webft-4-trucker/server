@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.post('/', async (req, res) => {
   Profiles.findBy({ email: req.body.email })
-    .then((profiles) => {
+    .then(async (profiles) => {
       const verifies = bcrypt.compareSync(
         req.body.password,
         profiles[0].password
@@ -15,7 +15,11 @@ router.post('/', async (req, res) => {
         //eslint-disable-next-line
         const { password, ...profResp } = profiles[0];
         const token = Auth.makeToken(profiles[0]);
-        res.status(200).json({ profile: profResp, token: token });
+        const diner = await Profiles.getDinerInfo(profiles[0].profile_id);
+        res.status(200).json({
+          profile: { ...profResp, current_location: diner.current_location },
+          token: token,
+        });
       } else
         res.status(401).json({ message: 'Incorrect username or password' });
     })
