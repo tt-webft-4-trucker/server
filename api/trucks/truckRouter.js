@@ -62,15 +62,15 @@ router.post('/', Auth.requireToken, async (req, res) => {
 });
 
 router.put('/', Auth.requireToken, async (req, res) => {
-  const truck = req.body;
+  const truckUpdate = req.body;
   const user = res.locals.user;
 
-  if (truck && user) {
-    Trucks.findById(truck.truck_id)
+  if (truckUpdate && user) {
+    Trucks.findById(truckUpdate.truck_id)
       .then((truck) => {
         const verify = truck.operator_id === user.operator_id;
         if (verify) {
-          Trucks.update(truck.truck_id, truck)
+          Trucks.update(truck.truck_id, truckUpdate)
             .then((updated) => {
               res
                 .status(200)
@@ -90,7 +90,7 @@ router.put('/', Auth.requireToken, async (req, res) => {
       })
       .catch((err) => {
         res.status(404).json({
-          message: `Could not find truck '${truck.truck_id}'`,
+          message: `Could not find truck '${truckUpdate.truck_id}'`,
           error: err.message,
         });
       });
