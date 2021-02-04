@@ -41,7 +41,7 @@ app.use(
 
 app.use(helmet());
 app.use(express.json());
-app.options('*', cors());
+app.use(cors());
 app.use(logger('dev'));
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
