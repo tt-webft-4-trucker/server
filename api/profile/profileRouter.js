@@ -115,6 +115,26 @@ router.post('/', async (req, res) => {
   }
 });
 
+router.put('/:id/location', Auth.requireToken, (req, res) => {
+  const id = String(req.params.id);
+  const user = res.locals.user;
+  const location = req.body;
+  const validate = user.profile_id === id;
+  if (validate) {
+    Profiles.updateDiner(user.diner_id, location)
+      .then((updated) => {
+        res.status(200).json({ message: 'Diner updated', diner: updated });
+      })
+      .catch((err) => {
+        res
+          .status(500)
+          .json({ message: "Diner couldn't be updated", error: err });
+      });
+  } else {
+    res.status(401).json({ message: 'Not authorized to complete this action' });
+  }
+});
+
 router.put('/', (req, res) => {
   const profile = req.body;
   if (profile) {

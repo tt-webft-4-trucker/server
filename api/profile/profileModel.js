@@ -67,6 +67,7 @@ const update = (profile_id, profile) => {
     .update(profile)
     .returning('*');
 };
+
 const remove = async (profile_id) => {
   return await db('profiles').where({ profile_id }).del();
 };
@@ -102,6 +103,14 @@ const getDinerInfo = async (profile_id) => {
     .select('current_location', 'favorite_trucks');
 };
 
+const updateDiner = (diner_id, info) => {
+  return db('diners')
+    .where({ diner_id: diner_id })
+    .first()
+    .update(info)
+    .returning('*');
+};
+
 module.exports = {
   findAll,
   findBy,
@@ -114,4 +123,5 @@ module.exports = {
   getOperatorInfo,
   createDiner,
   getDinerInfo,
+  updateDiner,
 };
