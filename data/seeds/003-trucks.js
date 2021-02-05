@@ -15,8 +15,8 @@ exports.seed = function (knex) {
           cuisine_type: 'Burritos',
           customer_rating_avg: 4.2,
           current_location: JSON.stringify({
-            lat: faker.address.latitude(),
-            long: faker.address.latitude(),
+            lat: 34.481205,
+            long: -118.143413,
           }),
         },
         {
@@ -27,8 +27,8 @@ exports.seed = function (knex) {
           cuisine_type: 'Ice Cream',
           customer_rating_avg: 4.5,
           current_location: JSON.stringify({
-            lat: faker.address.latitude(),
-            long: faker.address.latitude(),
+            lat: 35.525075,
+            long: -119.946373,
           }),
         },
         {
@@ -39,8 +39,8 @@ exports.seed = function (knex) {
           cuisine_type: 'Pizza',
           customer_rating_avg: 4.8,
           current_location: JSON.stringify({
-            lat: faker.address.latitude(),
-            long: faker.address.latitude(),
+            lat: 35.689426,
+            long: -114.46713,
           }),
         },
       ]);
